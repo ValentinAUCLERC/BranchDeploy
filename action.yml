@@ -1,0 +1,32 @@
+name: "ssh-branch-deploy"
+description: "Enabling Branch Deployments through IssueOps with GitHub Actions"
+author: "Valentin AUCLERC"
+branding:
+  icon: 'git-branch'
+  color: 'gray-dark'
+inputs:
+  token:
+    description: The GitHub token used to create an authenticated client - Provided for you by default!
+    default: ${{ github.token }}
+    required: true
+  ssh-host:
+    description: SSH host
+    required: true
+  ssh-port:
+    description: SSH port
+    required: true
+  ssh-user:
+    description: SSH user
+    required: true
+  ssh-pwd:
+    description: SSH password
+    required: true
+  ssh-script:
+    description: SSH script
+    required: true
+  base-url:
+    description: Web server URL
+    required: true
+runs:
+  using: "node20"
+  main: "index.js"
