@@ -41,8 +41,8 @@ __${github.context.actor}__, started a deployment to SSH !
 You can watch the progress [here](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
 > Branch: \`${pr.data.head.ref}\``);
             var paramString = triggerComment.replace(commandPattern, '');
-            if(/(--\w* \S*)\s*/g.test(paramString) === false && paramString !== '') {
-                createComment('👮 Due to security policy, you can only use parameters this way : `--param1 value1 --param2 value2...`')
+            if(/(--\w+\s?\w*)\s*/g.test(paramString) === false && paramString !== '') {
+                createComment('👮 Due to security policy, you can only use parameters this way : `--param1 value1 --param2 --param3...`')
             } else {
                 const conn = new Client();
                 conn.on('ready', () => {
