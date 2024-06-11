@@ -1,8 +1,8 @@
-import core from "@actions/core";
-import github from "@actions/github";
-import {Client} from "ssh2";
-import axios from "axios"; // node
-
+const core = require('@actions/core');
+const github = require('@actions/github');
+const { Client } = require('ssh2');
+const {issue} = require("@actions/core/lib/command");
+const axios = require('axios');
 
 const main = async() => {
     try {
