@@ -11,22 +11,25 @@ inputs:
     required: true
   ssh-host:
     description: SSH host
-    required: true
+    required: false
   ssh-port:
     description: SSH port
-    required: true
+    required: false
   ssh-user:
     description: SSH user
-    required: true
+    required: false
   ssh-pwd:
     description: SSH password
-    required: true
+    required: false
   ssh-script:
     description: SSH script
-    required: true
+    required: false
   base-url:
     description: Web server URL
     required: true
+  post-url:
+    description: POST URL
+    required: false
 runs:
   using: "node20"
   main: "index.js"
