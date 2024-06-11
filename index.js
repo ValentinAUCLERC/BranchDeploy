@@ -4,8 +4,10 @@ const { Client } = require('ssh2');
 const {issue} = require("@actions/core/lib/command");
 const axios = require('axios');
 
+
 const main = async() => {
     try {
+
         const ssh_host = core.getInput('ssh-host');
         const ssh_port = core.getInput('ssh-port');
         const ssh_username = core.getInput('ssh-user');
