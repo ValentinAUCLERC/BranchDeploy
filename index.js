@@ -12,7 +12,7 @@ const main = async() => {
         const ssh_password = core.getInput('ssh-pwd');
         const ssh_script = core.getInput('ssh-script');
 
-        const post_url = core.getInput('post_url');
+        const post_url = core.getInput('post-url');
 
         const base_url = core.getInput('base-url');
 
