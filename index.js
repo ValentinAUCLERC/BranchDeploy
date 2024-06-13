@@ -40,7 +40,7 @@ const main = async () => {
         if (commandPattern.test(triggerComment)) {
 
             createComment(`### Deployment Triggered 🚀
-__${github.context.actor}__, started a deployment to SSH !
+__${github.context.actor}__, started a deployment !
 You can watch the progress [here](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
 > Branch: \`${pr.data.head.ref}\``);
             var paramString = triggerComment.replace(commandPattern, '');
