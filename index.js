@@ -21,14 +21,17 @@ const main = async () => {
         let pr;
 
         if (github.context.payload.issue) {
+            // This is an issue_comment event
             issue_number = github.context.payload.issue.number;
             const {owner, repo} = github.context.repo;
-            pr = await octokit.rest.pulls.get({
+            const response = await octokit.rest.pulls.get({
                 owner: owner,
                 repo: repo,
                 pull_number: issue_number
             });
+            pr = response.data;
         } else if (github.context.payload.pull_request) {
+            // This is a pull_request event
             issue_number = github.context.payload.pull_request.number;
             pr = github.context.payload.pull_request;
         } else {
@@ -46,14 +49,14 @@ const main = async () => {
             });
         }
 
-        if (github.context.event_name === 'issue_comment') {
+        if (github.context.eventName === 'issue_comment') {
             const commandPattern = /^\.deploy\s*/;
             const triggerComment = github.context.payload.comment.body;
             if (commandPattern.test(triggerComment)) {
                 createComment(`### Deployment Triggered 🚀
 __${github.context.actor}__, started a deployment !
 You can watch the progress [here](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
-> Branch: \`${pr.data.head.ref}\``);
+> Branch: \`${pr.head.ref}\``);
 
                 var paramString = triggerComment.replace(commandPattern, '');
                 if (/(--\w+\s?\w*)\s*/g.test(paramString) === false && paramString !== '') {
@@ -63,7 +66,7 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
                         const conn = new Client();
                         conn.on('ready', () => {
                             let output = '';
-                            conn.exec(`${ssh_script} --base-url ${base_url} --action ${action} --pr ${issue_number} --branch ${pr.data.head.ref} ${paramString}`, (err, stream) => {
+                            conn.exec(`${ssh_script} --base-url ${base_url} --action ${action} --pr ${issue_number} --branch ${pr.head.ref} ${paramString}`, (err, stream) => {
                                 if (err) throw err;
                                 stream.on('data', (data) => {
                                     output += "> " + data;
@@ -84,7 +87,7 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
                         axios.post(post_url, {
                             baseUrl: base_url,
                             pr: issue_number,
-                            branch: pr.data.head.ref,
+                            branch: pr.head.ref,
                             action: action
                         }).then(function (response) {
                             createComment(`✅ Script has been executed, here is the output :
@@ -101,12 +104,12 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
             createComment(`### Deployment Triggered 🚀
 __${github.context.actor}__ asked for a cleaning !
 You can watch the progress [here](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
-> Branch: \`${pr.data.head.ref}\``);
+> Branch: \`${pr.head.ref}\``);
 
             axios.post(post_url, {
                 baseUrl: base_url,
                 pr: issue_number,
-                branch: pr.data.head.ref,
+                branch: pr.head.ref,
                 action: action
             }).then(function (response) {
                 createComment(`✅ Script has been executed, here is the output :
