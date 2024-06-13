@@ -22,7 +22,7 @@ const main = async () => {
         const token = core.getInput('token', {required: true});
         const octokit = new github.getOctokit(token);
 
-        const issue_number = github.context.payload.issue.number;
+        const issue_number = github.event.pull_request.number;
         const {owner, repo} = github.context.repo;
 
         function createComment(body) {
