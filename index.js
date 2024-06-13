@@ -17,6 +17,7 @@ const main = async () => {
         const post_url = core.getInput('post-url');
 
         const base_url = core.getInput('base-url');
+        const action = core.getInput('action');
 
         const token = core.getInput('token', {required: true});
         const octokit = new github.getOctokit(token);
@@ -50,7 +51,7 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
                     const conn = new Client();
                     conn.on('ready', () => {
                         let output = '';
-                        conn.exec(ssh_script + ' --base-url ' + base_url + ' --pr ' + github.context.issue.number + ' --branch ' + pr.data.head.ref + ' ' + paramString, (err, stream) => {
+                        conn.exec(ssh_script + ' --base-url ' + base_url + ' --action ' + action + ' --pr ' + github.context.issue.number + ' --branch ' + pr.data.head.ref + ' ' + paramString, (err, stream) => {
                             if (err) throw err;
                             stream.on('data', (data) => {
                                 output += "> " + data;
@@ -69,7 +70,7 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
                 } else {
 
                     axios.post(post_url, {
-                        baseUrl: base_url, pr: github.context.issue.number, branch: pr.data.head.ref
+                        baseUrl: base_url, pr: github.context.issue.number, branch: pr.data.head.ref, action: action
                     }).then(function (response) {
                         createComment(`✅ Script has been executed, here is the output :
                                 ${response.data}`);

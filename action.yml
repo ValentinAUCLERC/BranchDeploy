@@ -24,6 +24,9 @@ inputs:
   ssh-script:
     description: SSH script
     required: false
+  action:
+    description: What you want to do (deploy, delete...) use it on your script
+    required: false
   base-url:
     description: Web server URL
     required: false
