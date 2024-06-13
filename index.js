@@ -83,12 +83,13 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
             }
         }
         if(action === "delete") {
+            console.log('d'+github.event.pull_request.number);
             createComment(`### Deployment Triggered 🚀
 __${github.context.actor}__ asked for a cleaning !
 You can watch the progress [here](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
 > Branch: \`${pr.data.head.ref}\``);
             axios.post(post_url, {
-                baseUrl: base_url, pr: github.context.issue.number, branch: pr.data.head.ref, action: action
+                baseUrl: base_url, pr: github.event.pull_request.number, branch: pr.data.head.ref, action: action
             }).then(function (response) {
                 createComment(`✅ Script has been executed, here is the output :
                                 ${response.data}`);
