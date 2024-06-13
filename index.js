@@ -38,6 +38,7 @@ const main = async () => {
         var commandPattern = /^\.deploy\s*/;
         var triggerComment = github.context.payload.comment.body;
         if (commandPattern.test(triggerComment)) {
+
             createComment(`### Deployment Triggered 🚀
 __${github.context.actor}__, started a deployment to SSH !
 You can watch the progress [here](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
@@ -80,6 +81,20 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
 
                 }
             }
+        }
+        if(action === "delete") {
+            createComment(`### Deployment Triggered 🚀
+__${github.context.actor}__ asked for a cleaning !
+You can watch the progress [here](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
+> Branch: \`${pr.data.head.ref}\``);
+            axios.post(post_url, {
+                baseUrl: base_url, pr: github.context.issue.number, branch: pr.data.head.ref, action: action
+            }).then(function (response) {
+                createComment(`✅ Script has been executed, here is the output :
+                                ${response.data}`);
+            }).catch(function (error) {
+                console.log(error);
+            });
         }
     } catch (error) {
         core.setFailed(error.message)
