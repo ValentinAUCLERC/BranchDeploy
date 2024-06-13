@@ -85,7 +85,7 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
                     }).then(function (response) {
                         createComment(
                             `✅ Script has been executed, here is the output :
-                                ${response}`
+                                ${response.data}`
                         );
                     }).catch(function (error) {
                         console.log(error);
