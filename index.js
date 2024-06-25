@@ -85,17 +85,22 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
                         });
                     } else {
 
-                        const paramArray = paramString && paramString.trim() ? paramString.match(/--\S+(?:\s+\S+)?/g).map(param => {
-                            const parts = param.split(' ');
-                            return { name: parts[0].replace(/^--/, ''), value: parts[1] || null };
-                        }) : [];
+                        const paramObject = {};
+                        if (paramString && paramString.trim()) {
+                            paramString.match(/--\S+(?:\s+\S+)?/g).forEach(param => {
+                                const parts = param.split(' ');
+                                const paramName = parts[0].replace(/^--/, '');
+                                const paramValue = parts[1] || null;
+                                paramObject[paramName] = paramValue;
+                            });
+                        }
 
                         axios.post(post_url, {
                             baseUrl: base_url,
                             pr: issue_number,
                             branch: pr.head.ref,
                             action: action,
-                            parameters: paramArray
+                            parameters: paramObject
                         }).then(function (response) {
                             createComment(`✅ Script has been executed, here is the output :
                             ${response.data}`);
