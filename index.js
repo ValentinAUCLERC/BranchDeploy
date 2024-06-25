@@ -84,11 +84,18 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
                             password: ssh_password
                         });
                     } else {
+
+                        const paramArray = paramString.match(/--\S+(?:\s+\S+)?/g).map(param => {
+                            const parts = param.split(' ');
+                            return { name: parts[0], value: parts[1] || null };
+                        });
+
                         axios.post(post_url, {
                             baseUrl: base_url,
                             pr: issue_number,
                             branch: pr.head.ref,
-                            action: action
+                            action: action,
+                            parameters: paramArray
                         }).then(function (response) {
                             createComment(`✅ Script has been executed, here is the output :
                             ${response.data}`);
