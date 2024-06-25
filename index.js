@@ -85,10 +85,10 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
                         });
                     } else {
 
-                        const paramArray = paramString.match(/--\S+(?:\s+\S+)?/g).map(param => {
+                        const paramArray = paramString && paramString.trim() ? paramString.match(/--\S+(?:\s+\S+)?/g).map(param => {
                             const parts = param.split(' ');
                             return { name: parts[0], value: parts[1] || null };
-                        });
+                        }) : [];
 
                         axios.post(post_url, {
                             baseUrl: base_url,
