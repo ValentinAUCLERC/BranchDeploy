@@ -53,38 +53,10 @@ const main = async () => {
             const commandPattern = /^\.deploy\s*/;
             const triggerComment = github.context.payload.comment.body;
             if (commandPattern.test(triggerComment)) {
-                createComment(`### Deployment Triggered 🚀
-__${github.context.actor}__, started a deployment !
-You can watch the progress [here](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
-> Branch: \`${pr.head.ref}\``);
-
-                var paramString = triggerComment.replace(commandPattern, '');
+                let paramString = triggerComment.replace(commandPattern, '');
                 if (/(--\w+\s?\w*)\s*/g.test(paramString) === false && paramString !== '') {
-                    createComment('👮 Due to security policy, you can only use parameters this way : `--param1 value1 --param2 --param3...`');
+                    createComment('👮 Pour des raisons de sécurité, la seule syntaxe de paramètres autorisée est : `--param1 value1 --param2 --param3...`');
                 } else {
-                    if (ssh_host != "") {
-                        const conn = new Client();
-                        conn.on('ready', () => {
-                            let output = '';
-                            conn.exec(`${ssh_script} --base-url ${base_url} --action ${action} --pr ${issue_number} --branch ${pr.head.ref} ${paramString}`, (err, stream) => {
-                                if (err) throw err;
-                                stream.on('data', (data) => {
-                                    output += "> " + data;
-                                }).on('close', (code) => {
-                                    console.log('stream :: close\n', {code});
-                                    conn.end();
-                                    createComment(`✅ Script has been executed, here is the output :
-                                    ${output}`);
-                                });
-                            });
-                        }).connect({
-                            host: ssh_host,
-                            port: ssh_port,
-                            username: ssh_username,
-                            password: ssh_password
-                        });
-                    } else {
-
                         const paramObject = {};
                         if (paramString && paramString.trim()) {
                             paramString.match(/--\S+(?:\s+\S+)?/g).forEach(param => {
@@ -94,7 +66,6 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
                                 paramObject[paramName] = paramValue;
                             });
                         }
-
                         axios.post(post_url, {
                             baseUrl: base_url,
                             pr: issue_number,
@@ -102,30 +73,34 @@ You can watch the progress [here](https://github.com/${github.context.repo.owner
                             action: action,
                             parameters: paramObject
                         }).then(function (response) {
-                            createComment(`✅ Script has been executed, here is the output :
-                            ${response.data}`);
+                            createComment(`### Branches dynamiques 🚀
+__${github.context.actor}__, a demandé le démarrage d'un déploiement !
+Les détails d'exécution se trouvent [ici](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
+> Branche: \`${pr.head.ref}\`
+✅ Résultat du script :
+${response.data}`);
                         }).catch(function (error) {
                             console.log(error);
                         });
-                    }
                 }
             }
         }
 
         if (action === "delete") {
-            createComment(`### Deployment Triggered 🚀
-__${github.context.actor}__ asked for a cleaning !
-You can watch the progress [here](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
-> Branch: \`${pr.head.ref}\``);
-
             axios.post(post_url, {
                 baseUrl: base_url,
                 pr: issue_number,
                 branch: pr.head.ref,
                 action: action
             }).then(function (response) {
-                createComment(`✅ Script has been executed, here is the output :
-                ${response.data}`);
+                if(response.data != "") {
+                    createComment(`### Branches dynamiques 🚀
+__${github.context.actor}__ a demandé un nettoyage !
+Les détails se trouvent [ici](https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}) 🔗
+> Branche: \`${pr.head.ref}\`
+✅ Résultat de l'exécution :
+${response.data}`);
+                }
             }).catch(function (error) {
                 console.log(error);
             });
