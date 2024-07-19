@@ -80,7 +80,7 @@ Les détails d'exécution se trouvent [ici](https://github.com/${github.context.
 ✅ Résultat du script :
 ${response.data}`);
                         }).catch(function (error) {
-                            console.log(error);
+                            createComment(`Une erreur s'est produite lors de l'exécution du script : ${error}`);
                         });
                 }
             }
